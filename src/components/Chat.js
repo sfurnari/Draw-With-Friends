@@ -15,6 +15,7 @@ const Chat = ({socket, name, room}) => {
 
       await socket.emit('sendMessage', messageData)
       setMessageList((list) => [...list, messageData])
+      setCurrentMessage("")
     }
   } // sednMessage()
 
@@ -40,8 +41,12 @@ const Chat = ({socket, name, room}) => {
       <div className="chat-input">
         <input
           type="text" 
+          value={currentMessage}
           placeholder="Type your guess!"
-          onChange={(e) => setCurrentMessage(e.target.value)} 
+          onChange={(e) => setCurrentMessage(e.target.value)}
+          onKeyPress={(e) => {
+            e.key === "Enter" && sendMessage()
+          }} 
         />
         <button onClick={sendMessage}>&#9658;</button>
       </div>
