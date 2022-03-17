@@ -11,29 +11,22 @@ const Board = () => {
   useEffect(() => {
 
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d'); // getContext() method returns a drawing context on the canvas
-
-    // ----------------------- Colors --------------------------------------------------
+    const context = canvas.getContext('2d');
 
     const colors = document.getElementsByClassName('color');
 
-    // set the current colour
     const current = {
       color: 'black',
-    };
+    }; // set the current colour
 
-    // helper that will update the current colour
     const onColorUpdate = (e) => {
       current.color = e.target.className.split(' ')[1];
     };
 
-    // loop through the color elements and add the click event listeners
     for (let i = 0; i < colors.length; i++) {
       colors[i].addEventListener('click', onColorUpdate, false);
     }
     let drawing = false;
-
-    // ------------------------------- create the drawing ----------------------------
 
     const drawLine = (x0, y0, x1, y1, color, emit) => {
       context.beginPath();
@@ -57,7 +50,6 @@ const Board = () => {
       });
     };
 
-    // ---------------- mouse movement --------------------------------------
 
     const onMouseDown = (e) => {
       drawing = true;
@@ -78,8 +70,7 @@ const Board = () => {
       drawLine(current.x, current.y, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, current.color, true);
     };
 
-    // ----------- limit the number of events per second -----------------------
-
+    // throttle
     const throttle = (callback, delay) => {
       let previousCall = new Date().getTime();
       return function() {
@@ -92,20 +83,10 @@ const Board = () => {
       };
     };
 
-    // -----------------add event listeners to our canvas ----------------------
-
     canvas.addEventListener('mousedown', onMouseDown, false);
     canvas.addEventListener('mouseup', onMouseUp);
     canvas.addEventListener('mouseout', onMouseUp);
     canvas.addEventListener('mousemove', throttle(onMouseMove, 10));
-
-    // Touch support for mobile devices
-    canvas.addEventListener('touchstart', onMouseDown);
-    canvas.addEventListener('touchend', onMouseUp);
-    canvas.addEventListener('touchcancel', onMouseUp);
-    canvas.addEventListener('touchmove', throttle(onMouseMove, 10));
-
-    // -------------- make the canvas fill its parent component -----------------
 
     const onResize = () => {
       canvas.width = window.innerWidth;
@@ -115,7 +96,6 @@ const Board = () => {
     window.addEventListener('resize', onResize, false);
     onResize();
 
-    // ----------------------- socket.io connection ----------------------------
     const onDrawingEvent = (data) => {
       const w = canvas.width;
       const h = canvas.height;
@@ -125,8 +105,6 @@ const Board = () => {
     socketRef.current = io.connect('http://localhost:8080');
     socketRef.current.on('drawing', onDrawingEvent);
   }, []);
-
-  // ------------- The Canvas and color elements --------------------------
 
   return (
     <div>

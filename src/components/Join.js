@@ -1,9 +1,19 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
+import io from "socket.io-client";
+import Chat from "./Chat";
+
+const socket = io.connect('http://localhost:8080')
 
 const Join = () => {
   const [name, setName] = useState('')
   const [room, setRoom] = useState('')
+
+  const joinRoom = () => {
+    if (name !== '' && room !== '') {
+      socket.emit("join", room)
+    }
+  }
   
 
   return (
@@ -25,11 +35,14 @@ const Join = () => {
           onChange={(e) => setRoom(e.target.value)} 
         />
       </div>
-      <Link 
-        onClick={e => (!name || !room) ? e.preventDefault : null} 
-        to={`/game?name=${name}&room=${room}`}>
-          <button className="button" type="submit"> Join Room</button>
-      </Link>
+      <button 
+        onClick={joinRoom} 
+        className="button" 
+        type="submit"
+      > 
+        Join Room
+      </button>
+      <Chat socket={socket} name={name} room={room}/>
     </div>
   )
 }
