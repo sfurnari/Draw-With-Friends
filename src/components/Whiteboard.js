@@ -11,6 +11,9 @@ const Board = () => {
   useEffect(() => {
 
     const canvas = canvasRef.current;
+    const {width, height} = canvas.getBoundingClientRect()
+    canvas.width = width
+    canvas.height = height
     const context = canvas.getContext('2d'); 
 
     const colors = document.getElementsByClassName('color');
@@ -38,34 +41,53 @@ const Board = () => {
       context.closePath();
       // console.log('currently drawing');
       if (!emit) { return; }
-      const w = canvas.width;
-      const h = canvas.height;
-      console.log('width', w);
-      console.log('height', h);
-      console.log('x0', x0);
-      console.log('y0', y0);
+      // const {width, height} = e.target.getBoundingClientRect()
+      // const w = width;
+      // const h = height;
+      // console.log('width', w);
+      // console.log('height', h);
+      // console.log('x0', x0);
+      // console.log('y0', y0);
 
-      socketRef.current.emit('drawing', {
-        x0: x0 / w,
-        y0: y0 / h,
-        x1: x1 / w,
-        y1: y1 / h,
-        color,
-      });
+      // socketRef.current.emit('drawing', {
+      //   x0: x0 / w,
+      //   y0: y0 / h,
+      //   x1: x1 / w,
+      //   y1: y1 / h,
+      //   color,
+      // });
     };
 
 
     const onMouseDown = (e) => {
       drawing = true;
-      current.x = e.clientX
-      current.y = e.clientY
+      // console.log('rect:' , e.target.getBoundingClientRect());
+      const {x, y } = getScaledCoords(e)
+      current.x = x
+      current.y = y
     };
+
+    const getScaledCoords = (e) => {
+      const x = e.pageX - e.target.offsetLeft
+      const y = e.pageY - e.target.offsetTop
+      return {x, y}
+    }
 
     const onMouseMove = (e) => {
       if (!drawing) { return; }
-      drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
-      current.x =  e.clientX
-      current.y = e.clientY
+      const {width, height} = e.target.getBoundingClientRect()
+      const {x, y } = getScaledCoords(e)
+      console.log({x, y});
+      // const xNorm = e.pageX / window.innerWidth
+      // const yNorm = e.pageY / window.innerHeight
+      // const canvasX = xNorm * width
+      // const canvasY = yNorm * height
+      // const canvasX = x
+      // const canvasY = y
+      console.log('coords:', e.currentTarget.width, e.currentTarget.height);
+      drawLine(current.x, current.y, x, y, current.color, true);
+      current.x = x
+      current.y = y
       console.log('currentx:', current.x);
       console.log('currenty:', current.y);
     };
@@ -73,7 +95,8 @@ const Board = () => {
     const onMouseUp = (e) => {
       if (!drawing) { return; }
       drawing = false;
-      drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+      const {x, y } = getScaledCoords(e)
+      drawLine(current.x, current.y, x, y, current.color, true);
     };
 
     // throttle
@@ -94,13 +117,13 @@ const Board = () => {
     canvas.addEventListener('mouseout', onMouseUp);
     canvas.addEventListener('mousemove', throttle(onMouseMove, 32));
 
-    const onResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+    // const onResize = () => {
+    //   canvas.width = window.innerWidth;
+    //   canvas.height = window.innerHeight;
+    // };
 
-    window.addEventListener('resize', onResize, false);
-    onResize();
+    // window.addEventListener('resize', onResize, false);
+    // onResize();
 
     const onDrawingEvent = (data) => {
       const w = canvas.width;
@@ -109,7 +132,7 @@ const Board = () => {
     }
 
     socketRef.current = io.connect('http://localhost:8080');
-    socketRef.current.on('drawing', onDrawingEvent);
+    // socketRef.current.on('drawing', onDrawingEvent);
   }, []);
 
   return (

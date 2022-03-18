@@ -36,8 +36,8 @@ const Join = () => {
       </div>
       <Link 
         onClick={joinRoom} 
-        to={`/game?room=${room}`}
-        state={{socket, name, room}}         
+        to={'/game'}
+        state={{name, room}}         
       >
         <button 
           className="button" 
