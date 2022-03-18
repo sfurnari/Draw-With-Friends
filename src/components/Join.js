@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import io from "socket.io-client";
-import Chat from "./Chat";
 
 const socket = io.connect('http://localhost:8080')
 
@@ -35,14 +34,18 @@ const Join = () => {
           onChange={(e) => setRoom(e.target.value)} 
         />
       </div>
-      <button 
+      <Link 
         onClick={joinRoom} 
-        className="button" 
-        type="submit"
-      > 
-        Join Room
-      </button>
-      <Chat socket={socket} name={name} room={room}/>
+        to={`/game?room=${room}`}
+        state={{socket, name, room}}         
+      >
+        <button 
+          className="button" 
+          type="submit"
+        > 
+          Join Room
+        </button>
+      </Link>
     </div>
   )
 }

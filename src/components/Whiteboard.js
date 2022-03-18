@@ -11,7 +11,7 @@ const Board = () => {
   useEffect(() => {
 
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d'); 
 
     const colors = document.getElementsByClassName('color');
 
@@ -33,13 +33,17 @@ const Board = () => {
       context.moveTo(x0, y0);
       context.lineTo(x1, y1);
       context.strokeStyle = color;
-      context.lineWidth = 2;
+      context.lineWidth = 4;
       context.stroke();
       context.closePath();
-      console.log('currently drawing');
+      // console.log('currently drawing');
       if (!emit) { return; }
       const w = canvas.width;
       const h = canvas.height;
+      console.log('width', w);
+      console.log('height', h);
+      console.log('x0', x0);
+      console.log('y0', y0);
 
       socketRef.current.emit('drawing', {
         x0: x0 / w,
@@ -53,21 +57,23 @@ const Board = () => {
 
     const onMouseDown = (e) => {
       drawing = true;
-      current.x = e.clientX || e.touches[0].clientX;
-      current.y = e.clientY || e.touches[0].clientY;
+      current.x = e.clientX
+      current.y = e.clientY
     };
 
     const onMouseMove = (e) => {
       if (!drawing) { return; }
-      drawLine(current.x, current.y, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, current.color, true);
-      current.x = e.clientX || e.touches[0].clientX;
-      current.y = e.clientY || e.touches[0].clientY;
+      drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+      current.x =  e.clientX
+      current.y = e.clientY
+      console.log('currentx:', current.x);
+      console.log('currenty:', current.y);
     };
 
     const onMouseUp = (e) => {
       if (!drawing) { return; }
       drawing = false;
-      drawLine(current.x, current.y, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, current.color, true);
+      drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
     };
 
     // throttle
@@ -83,10 +89,10 @@ const Board = () => {
       };
     };
 
-    canvas.addEventListener('mousedown', onMouseDown, false);
+    canvas.addEventListener('mousedown', onMouseDown);
     canvas.addEventListener('mouseup', onMouseUp);
     canvas.addEventListener('mouseout', onMouseUp);
-    canvas.addEventListener('mousemove', throttle(onMouseMove, 10));
+    canvas.addEventListener('mousemove', throttle(onMouseMove, 32));
 
     const onResize = () => {
       canvas.width = window.innerWidth;
@@ -107,7 +113,7 @@ const Board = () => {
   }, []);
 
   return (
-    <div>
+    <div className='board-container'>
       <canvas ref={canvasRef} className="whiteboard" />
 
       <div ref={colorsRef} className="colors">
