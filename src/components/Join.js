@@ -1,16 +1,16 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
-import io from "socket.io-client";
+import socket from "../App";
 
-const socket = io.connect('http://localhost:8080')
 
-const Join = () => {
+const Join = (props) => {
+  // console.log(props.socket.id);
   const [name, setName] = useState('')
   const [room, setRoom] = useState('')
 
   const joinRoom = () => {
     if (name !== '' && room !== '') {
-      socket.emit("join", room)
+      props.socket.emit("join", room)
     }
   }
   

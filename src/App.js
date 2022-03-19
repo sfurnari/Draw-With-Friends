@@ -2,13 +2,17 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Join from './components/Join'
 import Game from './components/Game'
+import io from "socket.io-client";
 // import Board from "./components/Whiteboard";
+
+const socket = io.connect('http://localhost:8080')
+
 
 const App = () => (
   <Router>
     <Routes>
-      <Route path="/" element={<Join />}/>
-      <Route path="/game" element={<Game />}/>
+      <Route path="/" element={<Join socket={socket}/>}/>
+      <Route path="/game" element={<Game socket={socket}/>}/>
     </Routes>
   </Router>
 );
