@@ -4,6 +4,7 @@ import io from 'socket.io-client'
 const Chat = ({socket, name, room}) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([])
+  const [wordToGuess, setWordToGuess] = useState("")
 
   const sendMessage = async () =>{
     if (currentMessage !== "") {
@@ -22,6 +23,10 @@ const Chat = ({socket, name, room}) => {
   useEffect(() => {
     socket.on('getMessage', (data) => {
       setMessageList((list) => [...list, data])
+    })
+
+    socket.on('wordToGuess', word => {
+      setWordToGuess(word)
     })
   }, [socket])
 
@@ -49,6 +54,9 @@ const Chat = ({socket, name, room}) => {
           }} 
         />
         <button onClick={sendMessage}>&#9658;</button>
+      </div>
+      <div>
+        <h1>{wordToGuess}</h1>
       </div>
     </div>
   )
