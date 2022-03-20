@@ -5,7 +5,9 @@ import Game from './components/Game'
 import io from "socket.io-client";
 // import Board from "./components/Whiteboard";
 
-const socket = io.connect('https://draw-with-friends-backend.herokuapp.com/')
+const ENDPOINT = 'https://draw-with-friends-backend.herokuapp.com/'
+
+const socket = io.connect(ENDPOINT)
 
 
 const App = () => (
