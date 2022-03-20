@@ -6,13 +6,13 @@ import socket from "../App";
 const Join = (props) => {
   // console.log(props.socket.id);
   const [name, setName] = useState('')
-  const [room, setRoom] = useState('')
+  // const [room, setRoom] = useState('')
 
-  const joinRoom = () => {
-    if (name !== '' && room !== '') {
-      props.socket.emit("join", room)
-    }
-  }
+  // const joinRoom = () => {
+  //   if (name !== '' && room !== '') {
+  //     props.socket.emit("join", room)
+  //   }
+  // }
   
 
   return (
@@ -26,24 +26,24 @@ const Join = (props) => {
           onChange={(e) => setName(e.target.value)} 
         />
       </div>
-      <div>
+      {/* <div>
         <input 
           placeholder="Room" 
           className="joinInput" 
           type="text" 
           onChange={(e) => setRoom(e.target.value)} 
         />
-      </div>
+      </div> */}
       <Link 
-        onClick={joinRoom} 
+        // onClick={joinRoom} 
         to={'/game'}
-        state={{name, room}}         
+        state={{name}}         
       >
         <button 
           className="button" 
           type="submit"
         > 
-          Join Room
+          Join Game
         </button>
       </Link>
     </div>

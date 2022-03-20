@@ -6,7 +6,7 @@ import Board from "./Whiteboard";
 const Game = (props) => {
 
   const location = useLocation()
-  const {name, room} = location.state
+  const {name} = location.state
 
   return (
     <div>
@@ -15,7 +15,7 @@ const Game = (props) => {
       <Chat 
         socket={props.socket} 
         name={name} 
-        room={room}/>
+      />
     </div>
   )
 }

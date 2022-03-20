@@ -115,8 +115,6 @@ const Board = (props) => {
 
   return (
     <div className='board-container'>
-      <canvas ref={canvasRef} className="whiteboard" />
-
       <div ref={colorsRef} className="colors">
         <div className="color black" />
         <div className="color brown" />
@@ -127,6 +125,7 @@ const Board = (props) => {
         <div className="color blue" />
         <div className="color purple" />
       </div>
+      <canvas ref={canvasRef} className="whiteboard" />
     </div>
   );
 };

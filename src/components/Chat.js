@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import io from 'socket.io-client'
 
-const Chat = ({socket, name, room}) => {
+const Chat = ({socket, name}) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([])
   const [wordToGuess, setWordToGuess] = useState("")
@@ -9,7 +9,7 @@ const Chat = ({socket, name, room}) => {
   const sendMessage = async () =>{
     if (currentMessage !== "") {
       const messageData = {
-        room,
+        // room,
         name,
         message: currentMessage,
       }
