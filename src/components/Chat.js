@@ -2,10 +2,9 @@ import React, {useState, useEffect} from "react";
 import "../styles/chat.css"
 import io from 'socket.io-client'
 
-const Chat = ({socket, name}) => {
+const Chat = ({socket, name , currentlyDrawing}) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([])
-  const [wordToGuess, setWordToGuess] = useState("")
 
   const sendMessage = async () =>{
     if (currentMessage !== "") {
@@ -40,7 +39,10 @@ const Chat = ({socket, name}) => {
           </p>
         })}
       </div>
-      <div className="chat-input">
+      <div 
+        className="chat-input"
+        style={{visibility: currentlyDrawing ? 'hidden' : 'visible'}}
+      >
         <input
           type="text" 
           value={currentMessage}
@@ -51,9 +53,6 @@ const Chat = ({socket, name}) => {
           }} 
         />
         <button onClick={sendMessage}>&#9658;</button>
-      </div>
-      <div>
-        <h1>{wordToGuess}</h1>
       </div>
     </div>
   )

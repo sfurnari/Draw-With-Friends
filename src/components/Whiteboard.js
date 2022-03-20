@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import '../styles/whiteboard.css';
 
 
-const Board = (props) => {
+const Board = ({socket, currentlyDrawing}) => {
   const canvasRef = useRef(null);
   const colorsRef = useRef(null);
   const socketRef = useRef();
@@ -17,14 +17,25 @@ const Board = (props) => {
     canvas.height = height
 
     const colors = document.getElementsByClassName('color');
+    const size = document.getElementsByClassName('lineSize');
 
+    
     const current = {
       color: 'black',
+      size: 4
     }; // set the current colour
 
+    
+    const onSizeUpdate = (e) => {
+      current.size = e.target.value
+    }; // onSizeUpdate
+    
     const onColorUpdate = (e) => {
       current.color = e.target.className.split(' ')[1];
     }; // onColorUpdate
+    
+    size[0].addEventListener('input', onSizeUpdate) 
+      // input listener for size
 
     for (let i = 0; i < colors.length; i++) {
       colors[i].addEventListener('click', onColorUpdate, false);
@@ -32,12 +43,12 @@ const Board = (props) => {
 
     let drawing = false;
 
-    const drawLine = (x0, y0, x1, y1, color, emit) => {
+    const drawLine = (x0, y0, x1, y1, color, size, emit) => {
       context.beginPath();
       context.moveTo(x0, y0);
       context.lineTo(x1, y1);
       context.strokeStyle = color;
-      context.lineWidth = 4;
+      context.lineWidth = size;
       context.stroke();
       context.closePath();
 
@@ -51,6 +62,7 @@ const Board = (props) => {
         x1: x1 / w,
         y1: y1 / h,
         color,
+        size
       });
     }; // drawLine()
 
@@ -73,7 +85,7 @@ const Board = (props) => {
       if (!drawing) { return; }
       const {width, height} = e.target.getBoundingClientRect()
       const {x, y } = getScaledCoords(e)
-      drawLine(current.x, current.y, x, y, current.color, true);
+      drawLine(current.x, current.y, x, y, current.color, current.size, true);
       current.x = x
       current.y = y
     }; // onMouseMove()
@@ -82,7 +94,7 @@ const Board = (props) => {
       if (!drawing) { return; }
       drawing = false;
       const {x, y } = getScaledCoords(e)
-      drawLine(current.x, current.y, x, y, current.color, true);
+      drawLine(current.x, current.y, x, y, current.color, current.size, true);
     }; // onMouseUp()
 
     
@@ -106,16 +118,29 @@ const Board = (props) => {
     const onDrawingEvent = (data) => {
       const w = canvas.width;
       const h = canvas.height;
-      drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+      drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.size);
     }
 
-    socketRef.current = props.socket;
+    const clearBoard = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    socketRef.current = socket;
     socketRef.current.on('drawing', onDrawingEvent);
+    socketRef.current.on('newRound', clearBoard)
   }, []);
 
   return (
-    <div className='board-container'>
-      <div ref={colorsRef} className="colors">
+    <div 
+      className='board-container'
+      style={{pointerEvents: currentlyDrawing ? 'auto' : 'none'}}
+    >
+      <div 
+        ref={colorsRef} 
+        className="colors"
+        style={{visibility: currentlyDrawing ? 'visible' : 'hidden'}}
+      >
+        <div className="color white" />
         <div className="color black" />
         <div className="color brown" />
         <div className="color red" />
@@ -124,6 +149,10 @@ const Board = (props) => {
         <div className="color green" />
         <div className="color blue" />
         <div className="color purple" />
+        <div>
+          <strong>Brush Size: </strong>
+          <input type="range" className="lineSize" min={2} max={30} defaultValue={4}/>
+        </div>
       </div>
       <canvas ref={canvasRef} className="whiteboard" />
     </div>

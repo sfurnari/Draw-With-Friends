@@ -43,8 +43,7 @@ const wordList = [
   'bell', 
   'berry', 
   'bicycle', 
-  'bird', 
-  'birthday cake', 
+  'bird',  
   'birthday', 
   'blade', 
   'bleach', 
@@ -56,7 +55,7 @@ const wordList = [
   'book', 
   'boot', 
   'bottle', 
-  'bow tie', 
+  'bow', 
   'box', 
   'boy', 
   'brain', 
@@ -131,8 +130,7 @@ const wordList = [
   'ear', 
   'egg', 
   'electricity', 
-  'engine', 
-  'extension cord', 
+  'engine',  
   'eye', 
   'face', 
   'farm', 
@@ -151,8 +149,7 @@ const wordList = [
   'foot', 
   'fork', 
   'fowl', 
-  'frame', 
-  'french fries', 
+  'frame',  
   'frog', 
   'garbage', 
   'garden', 
@@ -162,10 +159,8 @@ const wordList = [
   'girl', 
   'glove', 
   'goat', 
-  'goblin', 
-  'golden retriever', 
-  'gun', 
-  'hair dryer', 
+  'goblin',  
+  'gun',  
   'hair', 
   'hammer', 
   'hand', 
@@ -180,8 +175,6 @@ const wordList = [
   'horn', 
   'horse', 
   'hospital', 
-  'hot dog', 
-  'hot tub', 
   'house', 
   'houseboat', 
   'hurdle', 
@@ -203,7 +196,6 @@ const wordList = [
   'leaf', 
   'leak', 
   'leg', 
-  'light bulb', 
   'lighthouse', 
   'line', 
   'lip', 
@@ -252,7 +244,6 @@ const wordList = [
   'pilot', 
   'pin', 
   'pineapple', 
-  'ping pong', 
   'pinwheel', 
   'pipe', 
   'pirate', 
@@ -262,8 +253,7 @@ const wordList = [
   'plough', 
   'pocket', 
   'pool', 
-  'popsicle', 
-  'post office', 
+  'popsicle',  
   'pot', 
   'potato', 
   'prison', 
@@ -345,8 +335,7 @@ const wordList = [
   'thread', 
   'throat', 
   'thumb', 
-  'ticket', 
-  'time machine', 
+  'ticket',  
   'tiptoe', 
   'toe', 
   'tongue', 
@@ -365,9 +354,7 @@ const wordList = [
   'violin', 
   'wall', 
   'watch', 
-  'watering can', 
   'wax', 
-  'wedding dress', 
   'wheel', 
   'whip', 
   'whistle', 
@@ -380,6 +367,10 @@ const wordList = [
   'zoo'
 ];
 
+let currentUsers = []
+let wordToGuess;
+let drawing;
+
 const getRandomWord = () => {
   const word = wordList[Math.floor(Math.random() * wordList.length)];
   return word
@@ -390,9 +381,13 @@ const getRandomDrawer = () => {
   return drawer
 }
 
-let currentUsers = []
-let wordToGuess;
-let drawing;
+const startNewRound = () => {
+  const newWord = getRandomWord()
+  wordToGuess = newWord
+  io.emit('getWord', wordToGuess)
+  io.emit('newRound')
+}
+
 
 
 io.on('connection', (socket) => {
@@ -402,21 +397,32 @@ io.on('connection', (socket) => {
     console.log(`User ${name} with ID: ${socket.id} joined the game`);
 
     // add socketID to currentUser array
-    currentUsers.push(socket.id)
+    currentUsers.push({socketId: socket.id, name})
     console.log(currentUsers);
+    io.emit('userList', currentUsers)
 
     // after 1st player joins set to drawer and get random word
     if (currentUsers.length === 1) {
       wordToGuess = getRandomWord()
       drawing = socket.id
-      console.log('currentlydrawing', drawing);
-      console.log(wordToGuess);
-      io.to(socket.id).emit('currentDrawer', true)
+
+      io.to(drawing).emit('currentDrawer', true)
     }
+    
     io.emit('getWord', wordToGuess)
 
     socket.on('sendMessage', (messageData) => {
-      socket.broadcast.emit('getMessage', messageData)
+
+      // if correct word is guessed start new round 
+      if (messageData.message === wordToGuess) {
+        io.emit('currentDrawer', false)
+
+        // set correct guesser to new drawer
+        io.to(socket.id).emit('currentDrawer', true)
+        startNewRound()
+      } else {
+        socket.broadcast.emit('getMessage', messageData)
+      }
     }) // on sendMessage
   
     socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
@@ -425,7 +431,8 @@ io.on('connection', (socket) => {
    
   socket.on('disconnect', () => {
     console.log('User has disconnected:', socket.id);
-    currentUsers = currentUsers.filter(id => id !== socket.id)
+    currentUsers = currentUsers.filter(user => user.socketId !== socket.id)
+    io.emit('userList', currentUsers)
 
     console.log(currentUsers);
   })

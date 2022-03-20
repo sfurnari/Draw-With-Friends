@@ -3,7 +3,6 @@
 }
 
 .board-container {
-  border: 1px solid red;
   top: 50%;
   width: 600px;
   height: 600px;
@@ -33,6 +32,7 @@
   margin: .2em;
 }
 
+.color.white { background-color: white; }
 .color.black { background-color: black; }
 .color.brown { background-color: brown; }
 .color.red { background-color: red; }
