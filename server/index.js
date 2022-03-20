@@ -380,38 +380,43 @@ const wordList = [
   'zoo'
 ];
 
-const currentUsers = []
-
 const getRandomWord = () => {
   const word = wordList[Math.floor(Math.random() * wordList.length)];
   return word
 }
 
+const getRandomDrawer = () => {
+  const drawer = currentUsers[Math.floor(Math.random() * currentUsers.length)];
+  return drawer
+}
+
+let currentUsers = []
+let wordToGuess;
+let drawing;
+
 
 io.on('connection', (socket) => {
   console.log('User has joined:', socket.id);
 
-  currentUsers.push(socket.id)
-  console.log(currentUsers);
-  
-  socket.on('join', async () => {
-    // socket.join(room)
-    console.log(`User with ID: ${socket.id} joined the room: ${room}`);
-    
-    const userList = await io.in(room).fetchSockets();
-    console.log(userList.length);
-    
-    if (userList.length < 2) {
-      word = getRandomWord()
+  socket.on('join', (name) => {
+    console.log(`User ${name} with ID: ${socket.id} joined the game`);
+
+    // add socketID to currentUser array
+    currentUsers.push(socket.id)
+    console.log(currentUsers);
+
+    // after 1st player joins set to drawer and get random word
+    if (currentUsers.length === 1) {
+      wordToGuess = getRandomWord()
+      drawing = socket.id
+      console.log('currentlydrawing', drawing);
+      console.log(wordToGuess);
+      io.to(socket.id).emit('currentDrawer', true)
     }
-    
-    io.in(room).emit('wordToGuess', room)
+    io.emit('getWord', wordToGuess)
 
     socket.on('sendMessage', (messageData) => {
-      if (messageData === room) {
-        
-      }
-      socket.to(messageData.room).emit('getMessage', messageData)
+      socket.broadcast.emit('getMessage', messageData)
     }) // on sendMessage
   
     socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
@@ -420,6 +425,9 @@ io.on('connection', (socket) => {
    
   socket.on('disconnect', () => {
     console.log('User has disconnected:', socket.id);
+    currentUsers = currentUsers.filter(id => id !== socket.id)
+
+    console.log(currentUsers);
   })
 
 });

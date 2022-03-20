@@ -1,0 +1,7 @@
+.chat-container {
+  top: 0px;
+  width: 600px;
+  height: 600px;
+  border: 2px solid green;
+  float: right
+}

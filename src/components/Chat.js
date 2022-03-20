@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import "../styles/chat.css"
 import io from 'socket.io-client'
 
 const Chat = ({socket, name}) => {
@@ -23,10 +24,6 @@ const Chat = ({socket, name}) => {
   useEffect(() => {
     socket.on('getMessage', (data) => {
       setMessageList((list) => [...list, data])
-    })
-
-    socket.on('wordToGuess', word => {
-      setWordToGuess(word)
     })
   }, [socket])
 

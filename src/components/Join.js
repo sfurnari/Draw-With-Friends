@@ -8,11 +8,11 @@ const Join = (props) => {
   const [name, setName] = useState('')
   // const [room, setRoom] = useState('')
 
-  // const joinRoom = () => {
-  //   if (name !== '' && room !== '') {
-  //     props.socket.emit("join", room)
-  //   }
-  // }
+  const joinRoom = () => {
+    if (name !== '') {
+      props.socket.emit("join", name)
+    }
+  }
   
 
   return (
@@ -35,7 +35,7 @@ const Join = (props) => {
         />
       </div> */}
       <Link 
-        // onClick={joinRoom} 
+        onClick={joinRoom} 
         to={'/game'}
         state={{name}}         
       >
