@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import '../styles/whiteboard.css';
+import '../styles/game.css';
 
 
 const Board = ({socket, currentlyDrawing}) => {
@@ -115,6 +115,15 @@ const Board = ({socket, currentlyDrawing}) => {
     canvas.addEventListener('mouseout', onMouseUp);
     canvas.addEventListener('mousemove', throttle(onMouseMove, 32));
 
+    const onResize = () => {
+      const {width, height} = canvas.getBoundingClientRect()
+      canvas.width = width
+      canvas.height = height
+    };
+
+    window.addEventListener('resize', onResize, false);
+    onResize();
+
     const onDrawingEvent = (data) => {
       const w = canvas.width;
       const h = canvas.height;
@@ -149,7 +158,7 @@ const Board = ({socket, currentlyDrawing}) => {
         <div className="color green" />
         <div className="color blue" />
         <div className="color purple" />
-        <div>
+        <div className="line-size">
           <strong>Brush Size: </strong>
           <input type="range" className="lineSize" min={2} max={30} defaultValue={4}/>
         </div>

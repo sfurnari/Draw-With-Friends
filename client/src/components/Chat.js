@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
-import "../styles/chat.css"
+import ScrollToBottom from 'react-scroll-to-bottom'
+import "../styles/game.css"
 
 const Chat = ({socket, name , currentlyDrawing}) => {
   const [currentMessage, setCurrentMessage] = useState("");
@@ -27,22 +28,12 @@ const Chat = ({socket, name , currentlyDrawing}) => {
 
   return (
     <div className="chat-container">
-      <div className="chat-header">
-        
-      </div>
-      <div className="chat-body">
-        {messageList.map((messageData) => {
-          return <p className="message">
-            <strong>{messageData.name}: </strong>
-            {messageData.message}
-          </p>
-        })}
-      </div>
       <div 
         className="chat-input"
-        style={{visibility: currentlyDrawing ? 'hidden' : 'visible'}}
+        style={{pointerEvents: currentlyDrawing ? 'none' : 'auto'}}
       >
         <input
+          className="text-field"
           type="text" 
           value={currentMessage}
           placeholder="Type your guess!"
@@ -51,8 +42,24 @@ const Chat = ({socket, name , currentlyDrawing}) => {
             e.key === "Enter" && sendMessage()
           }} 
         />
-        <button onClick={sendMessage}>&#9658;</button>
+        <button 
+          onClick={sendMessage}
+          className="chat-button"
+        >
+          &#9658;
+        </button>
       </div>
+        <ScrollToBottom>
+          <div className="chat-body">        
+              {
+              messageList.map((messageData) => {
+                return <p className="message">
+                  <strong>{messageData.name}: </strong>
+                  {messageData.message}
+                </p>
+              })}
+          </div>
+        </ScrollToBottom>
     </div>
   )
 }

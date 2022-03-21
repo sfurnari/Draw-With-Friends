@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {useLocation} from 'react-router-dom'
+import "../styles/game.css"
 import Chat from "./Chat";
 import Board from "./Whiteboard";
 
@@ -39,51 +40,55 @@ const Game = (props) => {
 
   return (
     <div>
-      {
-        currentlyDrawing
-        ?
-        <div>
-          <h3>You are currently drawing:</h3>
-          <h1>{wordToGuess}</h1>  
-        </div>
-        :
-        <div>
-          <h3>You are guessing:</h3>
-          <h1>{hideWord(wordToGuess)}</h1>
-        </div>
-      }
-      <div className="roundWon">
+      <div className="info-bar">
         {
-          roundWinner.status
+          currentlyDrawing
           ?
           <div>
-            <p>{roundWinner.name} guessed the correct word <strong>{wordToGuess}</strong> and will be the new drawer!</p>
-            <p><strong>Starting new round now!</strong></p>
+            <h3>You are currently drawing:</h3>
+            <h1>{wordToGuess}</h1>  
           </div>
-          
           :
-          <p></p>
+          <div>
+            <h3>You are guessing:</h3>
+            <h1>{hideWord(wordToGuess)}</h1>
+          </div>
         }
-      </div>
-      <div className="users-container">
-        {userList.map((user) => {
-          return(
-            <div className="user">
-              <p><strong>{user.name}</strong></p>
-              <p>Current Points: {user.points}</p>
+        <div className="roundWon">
+          {
+            roundWinner.status
+            ?
+            <div>
+              <p>{roundWinner.name.toUpperCase()} guessed the correct word <strong>{wordToGuess.toUpperCase()}</strong> and will be the new drawer!</p>
+              <p><strong>Starting new round!</strong></p>
             </div>
-          )
-        })}
+            :
+            <p></p>
+          }
+        </div>
       </div>
-      <Board 
-        socket={props.socket}
-        currentlyDrawing={currentlyDrawing}
-      />
-      <Chat 
-        socket={props.socket} 
-        name={name}
-        currentlyDrawing={currentlyDrawing} 
-      />
+      <div className="game">
+        <div className="users-container">
+          <h2>Scoreboard</h2>
+          {userList.map((user) => {
+            return(
+              <div className="user">
+                <p><strong>{user.name}</strong></p>
+                <p>Current Points: {user.points}</p>
+              </div>
+            )
+          })}
+        </div>
+        <Board 
+          socket={props.socket}
+          currentlyDrawing={currentlyDrawing}
+        />
+        <Chat 
+          socket={props.socket} 
+          name={name}
+          currentlyDrawing={currentlyDrawing} 
+        />
+      </div>
     </div>
   )
 }

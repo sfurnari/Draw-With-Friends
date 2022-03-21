@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+body {
+  font-family: 'Fredoka One', cursive;
+  background-image: url("../../public/img/bluemoon.png");
+  color: white;
+}
+
+.header {
+  font-size: 60px;
+  color: white;
+  text-align: center;
+}
+
+.joinInput {
+  font-size: 24px;
+  width: 30vw;
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 3px 10px;
+}
+
+.join-game {
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  color: white;
+  font-size: 40px;
+}
+
+.button {
+  border: 1px solid white;
+  font-size: 20px;
+  border-radius: 20px;
+  color: white;
+  margin-top: 1rem;
+  background-color: skyblue;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 3px 10px;
+}
+
+.join-container {
+  text-align: center;
+  position: relative;
+  top: 25vh;
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.info-bar {
+  background-color: rgba(70, 131, 180, 0.55);
+  border: solid 3px skyblue;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.board-container {
+  color: black;
+  background-color: white;
+  border: solid 3px skyblue;
+  border-radius: 20px;
+  width: 750px;
+  height: 550px;
+}
+
+.chat-container {
+  background-color: rgba(70, 131, 180, 0.55);
+  border: solid 3px skyblue;
+  border-radius: 20px;
+  width: 300px;
+  height: 550px;
+}
+
+.chat-body {
+  max-height: 470px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  overflow: -moz-scrollbars-none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chat-input input {
+  font-size: 16px;
+  position: relative;
+  margin: 1rem .5rem;
+  padding-top: 10px;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 3px 10px;
+}
+
+.chat-button {
+  border-radius: 30%;
+  background-color: skyblue;
+}
+
+.text-field {
+  position: relative;
+  width: 75%;
+  left: 2%;
+}
+
+.message {
+  margin: 1rem 1rem;
+  border: 1px solid skyblue;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 3px 10px;
+  padding: 5px;
+}
+
+.users-container {
+  background-color: rgba(70, 131, 180, 0.55);
+  border: solid 3px skyblue;
+  border-radius: 20px;
+  width: 300px;
+  height: 550px;
+}
+
+.users-container h2 {
+  text-align: center;
+}
+
+.users-container p {
+  margin: 0 auto;
+}
+
+.user {
+  text-align: center;
+  width: 80%;
+  border: solid 1px skyblue;
+  border-radius: 20px;
+  margin: 5px auto;
+  box-shadow: rgba(0, 0, 0, 0.35) 1px 3px 10px;
+}
+
+.whiteboard {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.colors {
+  border-bottom: 3px solid skyblue;
+}
+/* .board-container colors {
+  width: 100%;
+  left: 0;
+  text-align: center;
+  position: absolute;
+  z-index: 999;
+  border: solid 3px skyblue;
+  border-radius: 20px;
+} */
+.line-size {
+  display: inline-block;
+}
+
+.color {
+  display: inline-block;
+  height: 48px;
+  width: 48px;
+  border-radius: 50%;
+  border: solid 2px black;
+  margin: .2em;
+}
+
+.color.white { background-color: white; }
+.color.black { background-color: black; }
+.color.brown { background-color: brown; }
+.color.red { background-color: red; }
+.color.orange { background-color: orange; }
+.color.yellow { background-color: yellow; }
+.color.green { background-color: green; }
+.color.blue { background-color: blue; }
+.color.purple { background-color: purple; }
