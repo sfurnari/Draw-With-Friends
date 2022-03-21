@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import ScrollToBottom from 'react-scroll-to-bottom'
 import "../styles/game.css"
 
@@ -20,6 +20,16 @@ const Chat = ({socket, name , currentlyDrawing}) => {
     }
   } // sednMessage()
 
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messageList]);
+
   useEffect(() => {
     socket.on('getMessage', (data) => {
       setMessageList((list) => [...list, data])
@@ -28,6 +38,16 @@ const Chat = ({socket, name , currentlyDrawing}) => {
 
   return (
     <div className="chat-container">
+      <div className="chat-body">        
+        {
+        messageList.map((messageData) => {
+          return <p className="message">
+            <strong>{messageData.name}: </strong>
+            {messageData.message}
+          </p>
+        })}
+        <div ref={messagesEndRef} />
+      </div>
       <div 
         className="chat-input"
         style={{pointerEvents: currentlyDrawing ? 'none' : 'auto'}}
@@ -49,17 +69,6 @@ const Chat = ({socket, name , currentlyDrawing}) => {
           &#9658;
         </button>
       </div>
-        <ScrollToBottom>
-          <div className="chat-body">        
-              {
-              messageList.map((messageData) => {
-                return <p className="message">
-                  <strong>{messageData.name}: </strong>
-                  {messageData.message}
-                </p>
-              })}
-          </div>
-        </ScrollToBottom>
     </div>
   )
 }

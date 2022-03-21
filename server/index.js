@@ -417,12 +417,12 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (messageData) => {
 
       // if correct word is guessed start new round 
-      if (messageData.message === wordToGuess) {
+      if (messageData.message.toLowerCase() === wordToGuess) {
 
         const index = currentUsers.findIndex(el => {
           return el.socketId === socket.id;
         })
-        currentUsers[index].points += 10
+        currentUsers[index].points += 100
         io.emit('userList', currentUsers)
         io.emit('currentDrawer', false)
         
