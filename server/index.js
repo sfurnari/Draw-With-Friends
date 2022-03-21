@@ -1,16 +1,16 @@
 const express = require('express')
 const app = express()
 const http = require('http')
+const cors = require('cors')
 const { env } = require('process')
 const server = http.createServer(app)
-const socket = require('socket.io')
-const io = socket(server, {
-  cors: {
-    origin: ['http://localhost:3000']
-  }
-})
+const socket = require('socket.io');
+const io = socket(server, {cors: {origin: "*"}});
 const PORT = process.env.PORT || 8080;
 const router = require('./router')
+
+app.use(router)
+app.use(cors())
 
 const wordList = [
   'alligator', 
@@ -370,6 +370,7 @@ const wordList = [
 let currentUsers = []
 let wordToGuess;
 let drawing;
+let winner;
 
 const getRandomWord = () => {
   const word = wordList[Math.floor(Math.random() * wordList.length)];
@@ -381,23 +382,25 @@ const getRandomDrawer = () => {
   return drawer
 }
 
-const startNewRound = () => {
+const startNewRound = (id) => {
   const newWord = getRandomWord()
   wordToGuess = newWord
+  io.to(id).emit('currentDrawer', true)
   io.emit('getWord', wordToGuess)
   io.emit('newRound')
 }
 
 
-
+// on initial connection
 io.on('connection', (socket) => {
   console.log('User has joined:', socket.id);
 
+  // on join game
   socket.on('join', (name) => {
     console.log(`User ${name} with ID: ${socket.id} joined the game`);
 
-    // add socketID to currentUser array
-    currentUsers.push({socketId: socket.id, name})
+    // add socketID to currentUser array and send to FE
+    currentUsers.push({socketId: socket.id, name, points: 0})
     console.log(currentUsers);
     io.emit('userList', currentUsers)
 
@@ -408,27 +411,41 @@ io.on('connection', (socket) => {
 
       io.to(drawing).emit('currentDrawer', true)
     }
-    
     io.emit('getWord', wordToGuess)
 
+    // on message sent
     socket.on('sendMessage', (messageData) => {
 
       // if correct word is guessed start new round 
       if (messageData.message === wordToGuess) {
-        io.emit('currentDrawer', false)
 
-        // set correct guesser to new drawer
-        io.to(socket.id).emit('currentDrawer', true)
-        startNewRound()
+        const index = currentUsers.findIndex(el => {
+          return el.socketId === socket.id;
+        })
+        currentUsers[index].points += 10
+        io.emit('userList', currentUsers)
+        io.emit('currentDrawer', false)
+        
+        winner = {name: currentUsers[index].name, status: true}
+        io.emit('roundWon', winner)
+
+
+        // set winner to drawer, add points and grab new word
+        setTimeout(() => {
+          winner.status = false
+          io.emit('roundWon', winner)
+          startNewRound(socket.id)
+        }, 5000)
       } else {
         socket.broadcast.emit('getMessage', messageData)
       }
     }) // on sendMessage
   
+    // on drawing event
     socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
   }) // on Join
 
-   
+  // on disconnect, remove socket from currentUsers array and emit new array
   socket.on('disconnect', () => {
     console.log('User has disconnected:', socket.id);
     currentUsers = currentUsers.filter(user => user.socketId !== socket.id)
@@ -440,6 +457,5 @@ io.on('connection', (socket) => {
 });
 
 
-app.use(router)
 
 server.listen(PORT, () => console.log(`server is running on port ${PORT}`));

@@ -83,7 +83,7 @@ const Board = ({socket, currentlyDrawing}) => {
 
     const onMouseMove = (e) => {
       if (!drawing) { return; }
-      const {width, height} = e.target.getBoundingClientRect()
+      // const {width, height} = e.target.getBoundingClientRect()
       const {x, y } = getScaledCoords(e)
       drawLine(current.x, current.y, x, y, current.color, current.size, true);
       current.x = x

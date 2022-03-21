@@ -3,11 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Join from './components/Join'
 import Game from './components/Game'
 import io from "socket.io-client";
-// import Board from "./components/Whiteboard";
 
-const ENDPOINT = 'https://draw-with-friends-backend.herokuapp.com/'
+// const ENDPOINT = 'https://draw-with-friends-backend.herokuapp.com/'
+const LOCALHOST = 'http://localhost:8080'
 
-const socket = io.connect(ENDPOINT)
+const socket = io.connect(LOCALHOST)
 
 
 const App = () => (

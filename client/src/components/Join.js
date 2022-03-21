@@ -1,7 +1,5 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
-import socket from "../App";
-
 
 const Join = (props) => {
   // console.log(props.socket.id);
